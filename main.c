@@ -6,7 +6,7 @@
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords);
 void printDistanceMatrix(double **distanceMatrix, int numOfCoords);
-int findCheapestInsertion(double **distances, int *visited, int *currentTour, int currentSize, int numOfCoords);
+int findCheapestInsertion(double **distances, bool *visited, int *currentTour, int currentSize, int numOfCoords);
 void cheapestInsertionTSP(double **distancematrix, int numOfCoords);
 
 
@@ -76,7 +76,7 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords) {
 
 
 // Function to find the index of the city to insert that minimizes tour length
-int findCheapestInsertion(double **distances, int *visited, int *currentTour, int currentSize, int numOfCoords) {
+int findCheapestInsertion(double **distances, bool *visited, int *currentTour, int currentSize, int numOfCoords) {
     int bestCity = -1;
     double bestIncrease = DBL_MAX;
 
@@ -105,11 +105,11 @@ void cheapestInsertionTSP(double **distances, int numOfCoords) {
 
     // Start with the first city as the current tour
     tour[0] = 0;
-    visited[0] = 1;
+    visited[0] = true;
 
     while (currentSize < numOfCoords) {
         int cityToInsert = findCheapestInsertion(distances, visited, tour, currentSize, numOfCoords);
-        visited[cityToInsert] = 1;
+        visited[cityToInsert] = true;
 
         // Find the position to insert the city in the current tour
         int insertPosition = -1;
