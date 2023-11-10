@@ -1,36 +1,282 @@
 #include <stdio.h>
-#include "coordReader.h" // Include your custom header file
 #include <float.h>
 #include <stdlib.h>
+#include <time.h>
+#include <stdio.h>
+#include <float.h>
+#include <stdlib.h>
+#include <time.h>
+#include<math.h>
+#include<stdbool.h>
+
 
 double calculateDistance(double x1, double y1, double x2, double y2);
-double **calculateDistanceMatrix(double **coordinates, int numOfCoords);
+double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
 void printDistanceMatrix(double **distanceMatrix, int numOfCoords);
-int findCheapestInsertion(double **distances, bool *visited, int *currentTour, int currentSize, int numOfCoords);
-void cheapestInsertionTSP(double **distancematrix, int numOfCoords);
 
+int readNumOfCoords(char *fileName);
+double **readCoords(char *filename, int numOfCoords);
+void *writeTourToFile(int *tour, int tourLength, char *filename);
+
+
+double calculateDistance(double x1, double y1, double x2, double y2) {
+    // Calculate the Euclidean distance between two points.
+    return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
+}
+
+
+void cheapestInsertion(double **distanceMatrix, int numOfCoords)
+{
+    int visitedCount = 0;
+
+    int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
+    bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
+
+    // Initialise with the first vertex
+    tour[0] = 0;
+    visited[0] = true;
+    visitedCount++;
+
+    // Find the nearest vertex
+    double minimumDistance = DBL_MAX;
+
+    int nearestVertex;
+    int i = 0;
+    for(i = 1 ; i <numOfCoords; i++)
+    {
+        if(distanceMatrix[0][i]< minimumDistance)
+        {
+            minimumDistance = distanceMatrix[0][i];
+            nearestVertex = i;
+        }
+    }
+
+    // Add the nearest vertex in the tour
+    tour[1]= nearestVertex;
+    visited[nearestVertex] = true;
+    visitedCount++; // 2
+    tour[2] = 0;
+
+    while(visitedCount < numOfCoords)
+    {
+        double minimumAdditionalCost = DBL_MAX;
+
+        int minN;
+        int minUnvisited;
+        // tour = {0,1}
+        for(i=0; i < visitedCount; i++)
+        {
+            // unvisited nodes
+            int j = 0;
+           for(j =0; j<numOfCoords; j++)
+           {
+               // check for unvisited nodes
+               if(!visited[j])
+               {
+                   // j =2
+                   double additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
+                   if(additionalCost < minimumAdditionalCost)
+                   {
+                       minimumAdditionalCost = additionalCost;
+                       minN = i; // where to inset
+                       minUnvisited = j; // what to insert
+                   }
+               }
+           }
+        }
+
+        // Make space to add unvisited node to computed index
+        for(i = visitedCount; i > minN; i--)
+        {
+            tour[i+1] = tour[i];
+        }
+
+        // add the node to tour
+        tour[minN+1] = minUnvisited;
+        visited[minUnvisited] = true;
+        visitedCount++;
+
+    }
+
+    printf("Cheapest Insertion TSP Tour By Cheap Tharki Harami Ketan:\n");
+
+    double totalLength = 0;
+
+    for ( i = 0; i <=numOfCoords; i++) {
+        printf("%d ", tour[i]);
+        if(i>0) {
+            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
+        }
+    }
+    printf("\n");
+
+    printf("%f", totalLength);
+}
+
+void farthestInsertion(double **distanceMatrix, int numOfCoords)
+{
+    int visitedCount = 0;
+
+    int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
+    bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
+
+    // Initialise with the first vertex
+    tour[0] = 0;
+    visited[0] = true;
+    visitedCount++;
+
+    // Find the nearest vertex
+    double maximumDistance = DBL_MIN;
+
+    int farthestVertex;
+    int i = 0;
+    for(i = 1 ; i <numOfCoords; i++)
+    {
+        if(distanceMatrix[0][i]> maximumDistance)
+        {
+            maximumDistance = distanceMatrix[0][i];
+            farthestVertex = i;
+        }
+    }
+
+    // Add the nearest vertex in the tour
+    tour[1]= farthestVertex;
+    visited[farthestVertex] = true;
+    visitedCount++; // 2
+    tour[2] = 0;
+
+    while(visitedCount < numOfCoords)
+    {
+        double farthestDistance = 0;
+        int farthestNode;
+        // tour = {0,1}
+        for(i=0; i < visitedCount; i++)
+        {
+            // unvisited nodes
+            int j = 0;
+            for(j =0; j<numOfCoords; j++)
+            {
+                // check for unvisited nodes
+                if(!visited[j])
+                {
+                    // j =2
+                    double currentDistance = distanceMatrix[j][tour[i]];
+                    if(currentDistance > farthestDistance)
+                    {
+                        farthestDistance = currentDistance;
+                        farthestNode = j; // where to inset
+                    }
+                }
+            }
+        }
+        double minimumAdditionalCost = DBL_MAX;
+        int minN;
+        for(i=0; i < visitedCount; i++)
+        {
+            // j =2
+            double additionalCost = distanceMatrix[farthestNode][tour[i]]+ distanceMatrix[farthestNode][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
+            if(additionalCost < minimumAdditionalCost)
+            {
+                minimumAdditionalCost = additionalCost;
+                minN = i; // where to inset
+            }
+        }
+
+        // Make space to add unvisited node to computed index
+        for(i = visitedCount; i > minN; i--)
+        {
+            tour[i+1] = tour[i];
+        }
+        printf("Current Visited Count %d\n", visitedCount);
+
+        printf("Adding %d at position %d after %d:\n", farthestNode, minN + 1, tour[minN]);
+
+        // add the node to tour
+        tour[minN+1] = farthestNode;
+        visited[farthestNode] = true;
+        visitedCount++;
+
+    }
+
+    printf("Farthest Insertion TSP Tour By Cheap Tharki Harami Ketan:\n");
+
+
+//    int supposedAnswer[] = {0, 11, 12, 3, 6, 10, 15, 1, 13, 5, 4, 2, 7, 8, 14, 9, 0};
+
+    double totalLength = 0;
+    double totalSupposedLength = 0;
+
+    for ( i = 0; i <=numOfCoords; i++) {
+        printf("%d ", tour[i]);
+        if(i>0) {
+            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
+        }
+    }
+    printf("\n");
+
+    printf("%f", totalLength);
+    printf("\n");
+
+//    for ( i = 0; i <=numOfCoords; i++) {
+//        printf("%d ", supposedAnswer[i]);
+//        if(i>0) {
+//            totalSupposedLength += distanceMatrix[supposedAnswer[i]][supposedAnswer[i - 1]];
+//        }
+//    }
+    printf("\n");
+
+//    printf("%f", totalSupposedLength);
+    printf("\n");
+
+}
 
 
 int main(int argc, char *argv[]) {
 
-    char *filename = argv[1];
-    printf("%s",filename);
+    // taking default file name if user didn't provide input
+    char *fileName = "9_coords.coord";
+
+    if (argc > 1) {
+        fileName = argv[1];
+    }
+
+    clock_t start, end;
+    double time_taken;
+    start = clock();
+
+    printf("%s\n", fileName);
+
 
     int numOfCoords = readNumOfCoords("9_coords.coord");
     double **coordinates = readCoords("9_coords.coord", numOfCoords);
 
+    printf("%dNunber of coords:", numOfCoords);
+    printf("\n");
 
-    double **distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords);
+    double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
+    for (int i = 0; i < numOfCoords; i++) {
+        distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
+    }
 
+    distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
+//    cheapestInsertion(distanceMatrix, numOfCoords);
+     farthestInsertion(distanceMatrix, numOfCoords);
 
-    cheapestInsertionTSP(distanceMatrix,numOfCoords);
-//    printDistanceMatrix(distanceMatrix, numOfCoords);
-//    printf("\n");
+    end = clock();
+    time_taken = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("The time taken is %fs .\n", time_taken);
 
+    // Free memory
+    for (int i = 0; i < numOfCoords; i++) {
+        free(coordinates[i]);
+    }
+    free(coordinates);
 
-
-
+    for (int i = 0; i < numOfCoords; i++) {
+        free(distanceMatrix[i]);
+    }
+    free(distanceMatrix);
 
     printf("Hello, World1223!\n");
     printf("%d", numOfCoords); // %d is the format specifier for integers
@@ -39,106 +285,40 @@ int main(int argc, char *argv[]) {
 
 
 
-
-
-
 void printDistanceMatrix(double **distanceMatrix, int numOfCoords) {
     for (int i = 0; i < numOfCoords; i++) {
         for (int j = 0; j < numOfCoords; j++) {
-            printf("%.2f\t", distanceMatrix[i][j]);
+            printf("%f\t", distanceMatrix[i][j]);
         }
         printf("\n");
     }
 }
 
 
-double **calculateDistanceMatrix(double **coordinates, int numOfCoords) {
-    double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
-    for (int i = 0; i < numOfCoords; i++) {
-        distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
-    }
+double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
     for (int i = 0; i < numOfCoords; i++) {
         for (int j = 0; j < numOfCoords; j++) {
-            double x1 = coordinates[i][0];
-            double y1 = coordinates[i][1];
-            double x2 = coordinates[j][0];
-            double y2 = coordinates[j][1];
 
-            double distance = sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
+                double x1 = coordinates[i][0];
+                double y1 = coordinates[i][1];
+                double x2 = coordinates[j][0];
+                double y2 = coordinates[j][1];
 
-            distanceMatrix[i][j] = distance;
+//                printf("The distance calculated for i%d and j%d:", i, j);
+
+                double distance = calculateDistance(x1, y1, x2, y2);
+//                printf("The distance calculated for %f:", distance);
+//                printf("\n");
+
+                distanceMatrix[i][j] = distance;
+                printf("%f\t", distanceMatrix[i][j]);
+
         }
+
+        printf("\n");
+
     }
 
     return distanceMatrix;
 }
-
-
-// Function to find the index of the city to insert that minimizes tour length
-int findCheapestInsertion(double **distances, bool *visited, int *currentTour, int currentSize, int numOfCoords) {
-    int bestCity = -1;
-    double bestIncrease = DBL_MAX;
-
-    for (int city = 0; city < numOfCoords; city++) {
-        if (!visited[city]) {
-            for (int i = 0; i < currentSize; i++) {
-                int next = (i + 1) % currentSize;
-                double increase = distances[currentTour[i]][city] + distances[city][currentTour[next]] - distances[currentTour[i]][currentTour[next]];
-                if (increase < bestIncrease) {
-                    bestIncrease = increase;
-                    bestCity = city;
-                }
-            }
-        }
-    }
-
-    return bestCity;
-}
-
-// Function to solve the TSP using cheapest insertion
-void cheapestInsertionTSP(double **distances, int numOfCoords) {
-
-    int tour[numOfCoords];
-    int currentSize = 1;
-    bool visited[numOfCoords];
-
-    // Start with the first city as the current tour
-    tour[0] = 0;
-    visited[0] = true;
-
-    while (currentSize < numOfCoords) {
-        int cityToInsert = findCheapestInsertion(distances, visited, tour, currentSize, numOfCoords);
-        visited[cityToInsert] = true;
-
-        // Find the position to insert the city in the current tour
-        int insertPosition = -1;
-        double bestIncrease = DBL_MAX;
-
-        for (int i = 0; i < currentSize; i++) {
-            int next = (i + 1) % currentSize;
-            double increase = distances[tour[i]][cityToInsert] + distances[cityToInsert][tour[next]] - distances[tour[i]][tour[next]];
-
-            if (increase < bestIncrease) {
-                bestIncrease = increase;
-                insertPosition = next;
-            }
-        }
-
-        // Insert the city in the tour
-        for (int i = currentSize; i > insertPosition; i--) {
-            tour[i] = tour[i - 1];
-        }
-
-        tour[insertPosition] = cityToInsert;
-        currentSize++;
-    }
-
-    // Print the final tour
-    printf("Cheapest Insertion TSP Tour:\n");
-    for (int i = 0; i < numOfCoords; i++) {
-        printf("%d ", tour[i]);
-    }
-    printf("\n");
-}
-
