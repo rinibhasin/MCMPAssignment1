@@ -76,7 +76,7 @@ void *writeTourToFile(int *tour, int tourLength, char *filename){
 
     if(file == NULL){
         printf("Unable to open file: %s", filename);
-        return NULL;
+       return NULL;
     }
 
     fprintf(file, "%d \n", tourLength);
@@ -85,5 +85,5 @@ void *writeTourToFile(int *tour, int tourLength, char *filename){
     for(i=0; i < tourLength; i++) {
         fprintf(file, "%d ", tour[i]);
     }
-
+    return NULL;
 }
