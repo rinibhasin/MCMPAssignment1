@@ -8,15 +8,10 @@
 #include <omp.h>
 
 
-double calculateDistance(double x1, double y1, double x2, double y2);
-double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
-
-
 double calculateDistance(double x1, double y1, double x2, double y2) {
     // Calculate the Euclidean distance between two points.
     return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
 }
-
 
 void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 {
@@ -124,6 +119,29 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 }
 
+double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
+
+    int i =0;
+    int j =0;
+#pragma omp parallel for collapse(2) private(i, j)
+    for (i = 0; i < numOfCoords; i++) {
+        for (j = 0; j < numOfCoords; j++) {
+
+            double x1 = coordinates[i][0];
+            double y1 = coordinates[i][1];
+            double x2 = coordinates[j][0];
+            double y2 = coordinates[j][1];
+
+
+            double distance = calculateDistance(x1, y1, x2, y2);
+
+            distanceMatrix[i][j] = distance;
+        }
+    }
+
+    return distanceMatrix;
+}
+
 
 int main(int argc, char *argv[]) {
 
@@ -176,25 +194,3 @@ int main(int argc, char *argv[]) {
 }
 
 
-double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
-
-    int i =0;
-    int j =0;
-    #pragma omp parallel for collapse(2) private(i, j)
-    for (i = 0; i < numOfCoords; i++) {
-        for (j = 0; j < numOfCoords; j++) {
-
-            double x1 = coordinates[i][0];
-            double y1 = coordinates[i][1];
-            double x2 = coordinates[j][0];
-            double y2 = coordinates[j][1];
-
-
-            double distance = calculateDistance(x1, y1, x2, y2);
-
-            distanceMatrix[i][j] = distance;
-        }
-    }
-
-    return distanceMatrix;
-}
