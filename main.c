@@ -12,7 +12,6 @@
 
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
-void printDistanceMatrix(double **distanceMatrix, int numOfCoords);
 
 int readNumOfCoords(char *fileName);
 double **readCoords(char *filename, int numOfCoords);
@@ -23,7 +22,6 @@ double calculateDistance(double x1, double y1, double x2, double y2) {
     // Calculate the Euclidean distance between two points.
     return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
 }
-
 
 void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 {
@@ -260,8 +258,8 @@ int main(int argc, char *argv[]) {
 
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
-//    cheapestInsertion(distanceMatrix, numOfCoords);
-     farthestInsertion(distanceMatrix, numOfCoords);
+     cheapestInsertion(distanceMatrix, numOfCoords);
+     //farthestInsertion(distanceMatrix, numOfCoords);
 
     end = clock();
     time_taken = ((double) (end - start)) / CLOCKS_PER_SEC;
@@ -278,20 +276,8 @@ int main(int argc, char *argv[]) {
     }
     free(distanceMatrix);
 
-    printf("Hello, World1223!\n");
     printf("%d", numOfCoords); // %d is the format specifier for integers
     return 0;
-}
-
-
-
-void printDistanceMatrix(double **distanceMatrix, int numOfCoords) {
-    for (int i = 0; i < numOfCoords; i++) {
-        for (int j = 0; j < numOfCoords; j++) {
-            printf("%f\t", distanceMatrix[i][j]);
-        }
-        printf("\n");
-    }
 }
 
 
