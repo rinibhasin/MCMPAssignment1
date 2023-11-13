@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include "coordReader.c" // Include your custom header file
 #include <float.h>
 #include <stdlib.h>
 #include <time.h>
