@@ -162,7 +162,6 @@ int main(int argc, char *argv[]) {
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
-    int i=0;
     for (i = 0; i < numOfCoords; i++) {
         free(coordinates[i]);
     }
