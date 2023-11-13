@@ -4,12 +4,12 @@
 #include <stdlib.h>
 #include <time.h>
 #include<math.h>
-#include<stdio.h>
+#include<stdbool.h>
+#include <omp.h>
 
 
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
-void printDistanceMatrix(double **distanceMatrix, int numOfCoords);
 
 
 double calculateDistance(double x1, double y1, double x2, double y2) {
@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 
     clock_t start, end;
     double time_taken;
-    start = clock();
+    start = omp_get_wtime();
 
     printf("%s\n", fileName);
 
@@ -144,7 +144,7 @@ int main(int argc, char *argv[]) {
     int numOfCoords = readNumOfCoords("4096_coords.coord");
     double **coordinates = readCoords("4096_coords.coord", numOfCoords);
 
-    printf("%dNunber of coords:", numOfCoords);
+    printf("%dNumber of coords:", numOfCoords);
     printf("\n");
 
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
@@ -156,8 +156,8 @@ int main(int argc, char *argv[]) {
 
     cheapestInsertion(distanceMatrix, numOfCoords);
 
-    end = clock();
-    time_taken = ((double) (end - start)) / CLOCKS_PER_SEC;
+    end = omp_get_wtime();
+    time_taken = end - start;
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
@@ -171,26 +171,13 @@ int main(int argc, char *argv[]) {
     }
     free(distanceMatrix);
 
-    printf("Hello, World1223!\n");
-    printf("%d", numOfCoords); // %d is the format specifier for integers
     return 0;
-}
-
-
-
-void printDistanceMatrix(double **distanceMatrix, int numOfCoords) {
-    for (int i = 0; i < numOfCoords; i++) {
-        for (int j = 0; j < numOfCoords; j++) {
-            printf("%f\t", distanceMatrix[i][j]);
-        }
-        printf("\n");
-    }
 }
 
 
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for collapse(2) private(i, j)
     for (int i = 0; i < numOfCoords; i++) {
         for (int j = 0; j < numOfCoords; j++) {
 
@@ -203,12 +190,7 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
             double distance = calculateDistance(x1, y1, x2, y2);
 
             distanceMatrix[i][j] = distance;
-            printf("%f\t", distanceMatrix[i][j]);
-
         }
-
-        printf("\n");
-
     }
 
     return distanceMatrix;
