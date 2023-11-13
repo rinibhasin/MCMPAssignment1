@@ -148,7 +148,8 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
-    for (int i = 0; i < numOfCoords; i++) {
+    int i = 0;
+    for (i = 0; i < numOfCoords; i++) {
         distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
     }
 
@@ -161,12 +162,13 @@ int main(int argc, char *argv[]) {
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
-    for (int i = 0; i < numOfCoords; i++) {
+    int i=0;
+    for (i = 0; i < numOfCoords; i++) {
         free(coordinates[i]);
     }
     free(coordinates);
 
-    for (int i = 0; i < numOfCoords; i++) {
+    for (i = 0; i < numOfCoords; i++) {
         free(distanceMatrix[i]);
     }
     free(distanceMatrix);
@@ -177,9 +179,11 @@ int main(int argc, char *argv[]) {
 
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
+    int i =0;
+    int j =0;
     #pragma omp parallel for collapse(2) private(i, j)
-    for (int i = 0; i < numOfCoords; i++) {
-        for (int j = 0; j < numOfCoords; j++) {
+    for (i = 0; i < numOfCoords; i++) {
+        for (j = 0; j < numOfCoords; j++) {
 
             double x1 = coordinates[i][0];
             double y1 = coordinates[i][1];
