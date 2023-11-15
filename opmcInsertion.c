@@ -62,8 +62,10 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     visitedCount++; // 2
     tour[2] = 0;
 
-    while(visitedCount < numOfCoords)
-    {
+//    while(visitedCount < numOfCoords)
+        #pragma omp parallel for private(i, j, additionalCost, visitedCount) schedule(dynamic)
+        for(visitedCount = 2;visitedCount<numOfCoords; visitedCount++)
+        {
         double minimumAdditionalCost = DBL_MAX;
 
         int minN;
@@ -71,7 +73,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         // tour = {0,1}
         int j = 0;
         double additionalCost =0;
-        #pragma omp parallel for private(i, j, additionalCost)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
@@ -106,13 +107,13 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         // add the node to tour
         tour[minN+1] = minUnvisited;
         visited[minUnvisited] = true;
-        visitedCount++;
+//        visitedCount++;
 
     }
 
     printf("Cheapest Insertion TSP Tour\n");
 
-    double totalLength = numOfCoords+1;
+    double totalLength = i;
     writeTourToFile(tour, totalLength, "output.txt");
 
 }
