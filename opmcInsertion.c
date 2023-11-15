@@ -80,12 +80,15 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                 if(!visited[j])
                 {
                     // j =2
-                    additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
-                    if(additionalCost < minimumAdditionalCost)
+                    #pragma omp critical
                     {
-                        minimumAdditionalCost = additionalCost;
-                        minN = i; // where to inset
-                        minUnvisited = j; // what to insert
+                        additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
+                                         distanceMatrix[tour[i]][tour[i + 1]];
+                        if (additionalCost < minimumAdditionalCost) {
+                            minimumAdditionalCost = additionalCost;
+                            minN = i; // where to inset
+                            minUnvisited = j; // what to insert
+                        }
                     }
                 }
             }
