@@ -63,9 +63,9 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     tour[2] = 0;
     int j = 0;
     double additionalCost =0;
+//        for(visitedCount = 2;visitedCount<numOfCoords; visitedCount++)
 
-//    while(visitedCount < numOfCoords)
-        for(visitedCount = 2;visitedCount<numOfCoords; visitedCount++)
+    while(visitedCount < numOfCoords)
         {
         double minimumAdditionalCost = DBL_MAX;
 
@@ -107,7 +107,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         // add the node to tour
         tour[minN+1] = minUnvisited;
         visited[minUnvisited] = true;
-//        visitedCount++;
+        visitedCount++;
 
     }
 
