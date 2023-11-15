@@ -10,6 +10,7 @@
 #include<stdbool.h>
 
 
+
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
 
@@ -40,6 +41,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     int nearestVertex;
     int i = 0;
+
+    // reduction plus critical
     for(i = 1 ; i <numOfCoords; i++)
     {
         if(distanceMatrix[0][i]< minimumDistance)
@@ -96,7 +99,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     }
 
-    printf("Cheapest Insertion TSP Tour By Cheap Tharki Harami Ketan:\n");
+    printf("Cheapest Insertion TSP Tour\n");
 
     double totalLength = 0;
 
@@ -196,7 +199,7 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
 
     }
 
-    printf("Farthest Insertion TSP Tour By Cheap Tharki Harami Ketan:\n");
+    printf("Farthest Insertion TSP Tour\n");
 
 
 //    int supposedAnswer[] = {0, 11, 12, 3, 6, 10, 15, 1, 13, 5, 4, 2, 7, 8, 14, 9, 0};
@@ -252,6 +255,8 @@ int main(int argc, char *argv[]) {
     printf("\n");
 
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
+
+    // Can we make this allocation parallel
     for (int i = 0; i < numOfCoords; i++) {
         distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
     }
@@ -283,6 +288,7 @@ int main(int argc, char *argv[]) {
 
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
+    // default private
     for (int i = 0; i < numOfCoords; i++) {
         for (int j = 0; j < numOfCoords; j++) {
 

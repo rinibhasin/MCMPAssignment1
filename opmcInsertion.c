@@ -99,7 +99,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     }
 
-    printf("Cheapest Insertion TSP Tour By Cheap Tharki Harami Ketan:\n");
+    printf("Cheapest Insertion TSP Tour\n");
 
     double totalLength = 0;
 
@@ -198,13 +198,10 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
 
     }
 
-    printf("Farthest Insertion TSP Tour By Cheap Tharki Harami Ketan:\n");
+    printf("Farthest Insertion TSP Tour \n");
 
-
-//    int supposedAnswer[] = {0, 11, 12, 3, 6, 10, 15, 1, 13, 5, 4, 2, 7, 8, 14, 9, 0};
 
     double totalLength = 0;
-    double totalSupposedLength = 0;
 
     for ( i = 0; i <=numOfCoords; i++) {
         printf("%d ", tour[i]);
@@ -215,18 +212,6 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
     printf("\n");
 
     printf("%f", totalLength);
-    printf("\n");
-
-//    for ( i = 0; i <=numOfCoords; i++) {
-//        printf("%d ", supposedAnswer[i]);
-//        if(i>0) {
-//            totalSupposedLength += distanceMatrix[supposedAnswer[i]][supposedAnswer[i - 1]];
-//        }
-//    }
-    printf("\n");
-
-//    printf("%f", totalSupposedLength);
-    printf("\n");
 
 }
 
@@ -247,8 +232,8 @@ int main(int argc, char *argv[]) {
     printf("%s\n", fileName);
 
 
-    int numOfCoords = readNumOfCoords("9_coords.coord");
-    double **coordinates = readCoords("9_coords.coord", numOfCoords);
+    int numOfCoords = readNumOfCoords("4096_coords.coord");
+    double **coordinates = readCoords("4096_coords.coord", numOfCoords);
 
     printf("%dNunber of coords:", numOfCoords);
     printf("\n");
