@@ -9,7 +9,11 @@
 #include<math.h>
 #include<stdbool.h>
 #include <omp.h>
+#include <stdlib.h>
 
+
+
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
@@ -42,6 +46,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     int nearestVertex;
     int i = 0;
+
     for(i = 1 ; i <numOfCoords; i++)
     {
         if(distanceMatrix[0][i]< minimumDistance)
@@ -64,22 +69,27 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int minN;
         int minUnvisited;
         // tour = {0,1}
+        int j = 0;
+        #pragma omp parallel for private(i,j)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
-            int j = 0;
+
             for(j =0; j<numOfCoords; j++)
             {
                 // check for unvisited nodes
                 if(!visited[j])
                 {
-                    // j =2
-                    double additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
-                    if(additionalCost < minimumAdditionalCost)
+                    #pragma omp critical
                     {
+                    // j =2
+                    double additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
+                                            distanceMatrix[tour[i]][tour[i + 1]];
+                    if (additionalCost < minimumAdditionalCost) {
                         minimumAdditionalCost = additionalCost;
                         minN = i; // where to inset
                         minUnvisited = j; // what to insert
+                    }
                     }
                 }
             }
