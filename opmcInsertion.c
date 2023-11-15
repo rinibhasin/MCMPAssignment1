@@ -77,12 +77,13 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
             int j = 0;
             for(j =0; j<numOfCoords; j++)
             {
+                #pragma omp critical
+                {
                 // check for unvisited nodes
                 if(!visited[j])
                 {
                     // j =2
-                    #pragma omp critical
-                    {
+
                         additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
                                          distanceMatrix[tour[i]][tour[i + 1]];
                         if (additionalCost < minimumAdditionalCost) {
