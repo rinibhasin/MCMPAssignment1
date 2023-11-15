@@ -65,7 +65,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     double additionalCost =0;
 
 //    while(visitedCount < numOfCoords)
-        #pragma omp parallel for private(i, j, additionalCost, visitedCount) schedule(dynamic)
         for(visitedCount = 2;visitedCount<numOfCoords; visitedCount++)
         {
         double minimumAdditionalCost = DBL_MAX;
@@ -73,7 +72,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int minN;
         int minUnvisited;
         // tour = {0,1}
-
+        #pragma omp parallel for private(i, j, additionalCost) schedule(dynamic)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
