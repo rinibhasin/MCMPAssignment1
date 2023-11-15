@@ -70,7 +70,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int minUnvisited;
         // tour = {0,1}
         int j = 0;
-        #pragma omp parallel for private(i,j)
+        double additionalCost =0;
+        #pragma omp parallel for private(i, j, additionalCost)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
@@ -80,11 +81,12 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                 // check for unvisited nodes
                 if(!visited[j])
                 {
+                    additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
+                                     distanceMatrix[tour[i]][tour[i + 1]];
+
                     #pragma omp critical
                     {
                     // j =2
-                    double additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
-                                            distanceMatrix[tour[i]][tour[i + 1]];
                     if (additionalCost < minimumAdditionalCost) {
                         minimumAdditionalCost = additionalCost;
                         minN = i; // where to inset
