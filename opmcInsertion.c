@@ -60,22 +60,22 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int minN= 0;
         int minUnvisited =0;
         // tour = {0,1} paralel + collapse + crticial
-
+        int j = 0;double additionalCost =0;
         #pragma omp parallel for collapse(2) private(i, j, additionalCost) shared(numOfCoords)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
-            int j = 0;
-            for(j =0; j<numOfCoords; j++)
+
+            for(j=0; j<numOfCoords; j++)
             {
                 // check for unvisited nodes
                 if(!visited[j])
                 {
                     // j =2 parallel + reduce
-                    double additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
+                    additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
                     if(additionalCost < minimumAdditionalCost)
                     {
-                        #pragma omp critical updateScores
+                        #pragma omp critical
                         update(minimumAdditionalCost, additionalCost,minN, i,j,minUnvisited);
 //                        minimumAdditionalCost = additionalCost;
 //                        minN = i; // where to inset
