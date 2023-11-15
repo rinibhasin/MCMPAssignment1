@@ -111,6 +111,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     }
     printf("\n");
 
+    writeTourToFile(tour, totalLength, "output.txt");
+
     printf("%f", totalLength);
 }
 
@@ -248,8 +250,8 @@ int main(int argc, char *argv[]) {
     printf("%s\n", fileName);
 
 
-    int numOfCoords = readNumOfCoords("9_coords.coord");
-    double **coordinates = readCoords("9_coords.coord", numOfCoords);
+    int numOfCoords = readNumOfCoords("4096_coords.coord");
+    double **coordinates = readCoords("4096_coords.coord", numOfCoords);
 
     printf("%dNunber of coords:", numOfCoords);
     printf("\n");
@@ -305,8 +307,6 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
                 distanceMatrix[i][j] = distance;
 
         }
-
-        printf("\n");
 
     }
 

@@ -110,6 +110,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         }
     }
 
+    writeTourToFile(tour, totalLength, "output.txt");
     printf("%f", totalLength);
 }
 
