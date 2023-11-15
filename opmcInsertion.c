@@ -46,7 +46,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     int nearestVertex;
     int i = 0;
-
     for(i = 1 ; i <numOfCoords; i++)
     {
         if(distanceMatrix[0][i]< minimumDistance)
@@ -61,38 +60,32 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     visited[nearestVertex] = true;
     visitedCount++; // 2
     tour[2] = 0;
-    int j = 0;
-    double additionalCost =0;
-//        for(visitedCount = 2;visitedCount<numOfCoords; visitedCount++)
 
     while(visitedCount < numOfCoords)
-        {
+    {
         double minimumAdditionalCost = DBL_MAX;
 
         int minN;
         int minUnvisited;
+        double additionalCost;
         // tour = {0,1}
         #pragma omp parallel for private(i, j, additionalCost) schedule(dynamic)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
-
+            int j = 0;
             for(j =0; j<numOfCoords; j++)
             {
                 // check for unvisited nodes
                 if(!visited[j])
                 {
-                    additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
-                                     distanceMatrix[tour[i]][tour[i + 1]];
-
-                    #pragma omp critical
-                    {
                     // j =2
-                    if (additionalCost < minimumAdditionalCost) {
+                    additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
+                    if(additionalCost < minimumAdditionalCost)
+                    {
                         minimumAdditionalCost = additionalCost;
                         minN = i; // where to inset
                         minUnvisited = j; // what to insert
-                    }
                     }
                 }
             }
@@ -113,11 +106,10 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     printf("Cheapest Insertion TSP Tour\n");
 
-    double totalLength = i;
+    double totalLength = numOfCoords+1;
     writeTourToFile(tour, totalLength, "output.txt");
 
 }
-
 void farthestInsertion(double **distanceMatrix, int numOfCoords)
 {
     int visitedCount = 0;
