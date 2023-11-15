@@ -74,7 +74,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
-            int j = 0;
             for(j =0; j<numOfCoords; j++)
             {
                 #pragma omp critical
