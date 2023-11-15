@@ -12,6 +12,13 @@ double calculateDistance(double x1, double y1, double x2, double y2) {
     return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
 }
 
+void update(double  minimumAdditionalCost, double additionalCost, double minN, int i, int j, int minUnvisited)
+{
+    minimumAdditionalCost = additionalCost;
+    minN = i; // where to inset
+    minUnvisited = j;
+}
+
 void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 {
     int visitedCount = 0;
@@ -49,6 +56,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     while(visitedCount < numOfCoords)
     {
         double minimumAdditionalCost = DBL_MAX;
+
         int minN= 0;
         int minUnvisited =0;
         // tour = {0,1} paralel + collapse + crticial
@@ -67,15 +75,17 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                     double additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
                     if(additionalCost < minimumAdditionalCost)
                     {
-                       #pragma omp critical updateScores {
-                        minimumAdditionalCost = additionalCost;
-                        minN = i; // where to insert
-                        minUnvisited = j; // what to insert
-                        }
+                        #pragma omp critical updateScores
+                        update(minimumAdditionalCost, additionalCost,minN, i,j,minUnvisited);
+//                        minimumAdditionalCost = additionalCost;
+//                        minN = i; // where to inset
+//                        minUnvisited = j; // what to insert
+
                     }
                 }
             }
         }
+
 
         // Make space to add unvisited node to computed index
         for(i = visitedCount; i > minN; i--)
@@ -148,8 +158,8 @@ int main(int argc, char *argv[]) {
     printf("%s\n", fileName);
 
 
-    int numOfCoords = readNumOfCoords("4096_coords.coord");
-    double **coordinates = readCoords("4096_coords.coord", numOfCoords);
+    int numOfCoords = readNumOfCoords("16_coords.coord");
+    double **coordinates = readCoords("16_coords.coord", numOfCoords);
 
     printf("%dNumber of coords:", numOfCoords);
     printf("\n");
