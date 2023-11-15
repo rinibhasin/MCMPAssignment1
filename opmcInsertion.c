@@ -256,12 +256,12 @@ int main(int argc, char *argv[]) {
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
-    for (int i = 0; i < numOfCoords; i++) {
+    for (i = 0; i < numOfCoords; i++) {
         free(coordinates[i]);
     }
     free(coordinates);
 
-    for (int i = 0; i < numOfCoords; i++) {
+    for (i = 0; i < numOfCoords; i++) {
         free(distanceMatrix[i]);
     }
     free(distanceMatrix);

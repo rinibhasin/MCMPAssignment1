@@ -257,7 +257,8 @@ int main(int argc, char *argv[]) {
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
 
     // Can we make this allocation parallel
-    for (int i = 0; i < numOfCoords; i++) {
+    int i =0;
+    for (i = 0; i < numOfCoords; i++) {
         distanceMatrix[i] = (double *)malloc(numOfCoords * sizeof(double));
     }
 
@@ -271,12 +272,13 @@ int main(int argc, char *argv[]) {
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
-    for (int i = 0; i < numOfCoords; i++) {
+
+    for (i = 0; i < numOfCoords; i++) {
         free(coordinates[i]);
     }
     free(coordinates);
 
-    for (int i = 0; i < numOfCoords; i++) {
+    for (i = 0; i < numOfCoords; i++) {
         free(distanceMatrix[i]);
     }
     free(distanceMatrix);
@@ -289,22 +291,18 @@ int main(int argc, char *argv[]) {
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
     // default private
-    for (int i = 0; i < numOfCoords; i++) {
-        for (int j = 0; j < numOfCoords; j++) {
+    int i =0;
+    int j = 0;
+    for (i = 0; i < numOfCoords; i++) {
+        for (j = 0; j < numOfCoords; j++) {
 
                 double x1 = coordinates[i][0];
                 double y1 = coordinates[i][1];
                 double x2 = coordinates[j][0];
                 double y2 = coordinates[j][1];
 
-//                printf("The distance calculated for i%d and j%d:", i, j);
-
                 double distance = calculateDistance(x1, y1, x2, y2);
-//                printf("The distance calculated for %f:", distance);
-//                printf("\n");
-
                 distanceMatrix[i][j] = distance;
-                printf("%f\t", distanceMatrix[i][j]);
 
         }
 
