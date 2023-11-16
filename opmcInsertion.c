@@ -120,7 +120,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
 
-        int x=0; double minCost = DBL_MAX;
+        int x=0;
         for(x =0; i< noOfThreads; x++)
         {
 
@@ -130,9 +130,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
             printf("Minimum position %d:", positions[x]);
             printf("Minimum nearest vertex %d:", nearestVertexes[x]);
 
-            if(minimumAdditionalCosts[x]< minCost)
+            if(minimumAdditionalCosts[x]< minimumAdditionalCost)
             {
-                minCost = minimumAdditionalCosts[x];
                 minimumAdditionalCost = minimumAdditionalCosts[x];
                 minN = positions[x];
                 minUnvisited = nearestVertexes[x];
