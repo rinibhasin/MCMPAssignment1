@@ -110,7 +110,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
 
-        int x=0; int minCost = DBL_MAX;
+        int x=0; double minCost = DBL_MAX;
         for(x =0; i< noOfThreads; x++)
         {
 
