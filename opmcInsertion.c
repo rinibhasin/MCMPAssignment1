@@ -101,9 +101,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                 // unvisited nodes
                 for (j = 0; j < numOfCoords; j++) {
                     threadID  = omp_get_thread_num();
-                    printf("\n");
-                    printf("%d", visited[5]);
-                    printf("\n");
                     // check for unvisited nodes
                     if (!visited[j]) {
                         // j =2
@@ -161,7 +158,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         printf(" Adding node to tour: %d", tour[minN+1]);
         printf("\n");
         visitedCount++;
-
+        printf("before while")
+        printf("%d", visited[5]);
     }
 
     printf("Cheapest Insertion TSP Tour\n");
