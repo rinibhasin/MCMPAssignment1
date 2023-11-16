@@ -62,7 +62,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
         int minN;
         int minUnvisited;
-        // tour = {0,1}
+        // tour = {0,1,}
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
