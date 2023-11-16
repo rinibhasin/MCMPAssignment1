@@ -143,10 +143,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
         // add the node to tour
+        visited[minUnvisited] = true;
         tour[minN+1] = minUnvisited;
-        visited[minUnvisited+1] = true;
-        visited[5] = true;
-        printf("\n");
 
         printf("Visited array");
         int k=0;
