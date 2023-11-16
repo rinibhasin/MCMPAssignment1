@@ -88,8 +88,14 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     while(visitedCount < numOfCoords)
     {
-        printf("top of the  while loop value:");
-        printf("%d", visited[5]);
+
+        for(y =0;y< noOfThreads; y++)
+        {
+            minimumAdditionalCosts[y] = DBL_MAX;
+            positions[y] =0;
+            nearestVertexes[y]=0;
+        }
+
         double minimumAdditionalCost = DBL_MAX;
 
         int minN;
