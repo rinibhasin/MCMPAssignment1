@@ -75,6 +75,14 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     int *positions = (int*)malloc(noOfThreads*sizeof(int));
     int *nearestVertexes = (int*)malloc(noOfThreads*sizeof(int));
 
+    int y =0;
+    for(y =0; y< noOfThreads; y++)
+    {
+        minimumAdditionalCosts[y] = DBL_MAX;
+        positions[y] =0;
+        nearestVertexes[y]=0;
+    }
+
 
     while(visitedCount < numOfCoords)
     {
