@@ -46,11 +46,21 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     int nearestVertex;
     int i = 0;
+
+    int noOfThreads = omp_get_max_threads();
+
+
+
+
+
+
+//#pragma omp parallel for private(i)
     for(i = 1 ; i <numOfCoords; i++)
     {
         if(distanceMatrix[0][i]< minimumDistance)
         {
             minimumDistance = distanceMatrix[0][i];
+
             nearestVertex = i;
         }
     }
@@ -61,6 +71,11 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     visitedCount++; // 2
     tour[2] = 0;
 
+    int *minimumAdditionalCosts = (int*)malloc(numOfCoords*sizeof(int));
+    int *positions = (int*)malloc(numOfCoords*sizeof(int));
+    int *nearestVertexes = (int*)malloc(numOfCoords*sizeof(int));
+
+
     while(visitedCount < numOfCoords)
     {
         double minimumAdditionalCost = DBL_MAX;
@@ -70,30 +85,51 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         double additionalCost;
         int j;
         // tour = {0,1}
-        #pragma omp parallel for private(i, j, additionalCost, minimumAdditionalCost,minN, minUnvisited)
-        for(i=0; i < visitedCount; i++)
-        {
-            // unvisited nodes
-            for(j =0; j<numOfCoords; j++)
-            {
-                #pragma omp critical
-                {
-                // check for unvisited nodes
-                if(!visited[j])
-                {
-                    // j =2
 
-                        additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
-                                         distanceMatrix[tour[i]][tour[i + 1]];
-                        if (additionalCost < minimumAdditionalCost) {
-                            minimumAdditionalCost = additionalCost;
-                            minN = i; // where to inset
-                            minUnvisited = j; // what to insert
-                        }
+        #pragma omp parallel for private(i,j)
+        for(i=0; i < visitedCount; i++) {
+            // unvisited nodes
+            int threadID = omp_get_thread_num();
+            for (j = 0; j < numOfCoords; j++) {
+                // check for unvisited nodes
+                if (!visited[j]) {
+                    // j =2
+                    additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
+                                     distanceMatrix[tour[i]][tour[i + 1]];
+                    if (additionalCost < minimumAdditionalCost) {
+//                        minimumAdditionalCost = additionalCost;
+//                        minN = i; // where to inset
+//                        minUnvisited = j; // what to insert
+                        minimumAdditionalCosts[threadID] = additionalCost;
+                        positions[threadID] = i;
+                        nearestVertexes[threadID] = j;
                     }
                 }
             }
         }
+
+
+
+        int x=0; int minCost = DBL_MAX;
+        for(x =0; i< noOfThreads; x++)
+        {
+
+            printf("The array is of length %d:", noOfThreads);
+            printf("The element at %d:", x);
+            printf("Minimum additional cost %d:", minimumAdditionalCosts[x]);
+            printf("Minimum position %d:", positions[x]);
+            printf("Minimum nearest vertex %d:", nearestVertexes[x]);
+
+            if(minimumAdditionalCosts[x]< minCost)
+            {
+                minCost = minimumAdditionalCosts[x];
+                minimumAdditionalCost = minimumAdditionalCosts[x];
+                minN = positions[x];
+                minUnvisited = nearestVertexes[x];
+            }
+
+        }
+
 
         // Make space to add unvisited node to computed index
         for(i = visitedCount; i > minN; i--)
