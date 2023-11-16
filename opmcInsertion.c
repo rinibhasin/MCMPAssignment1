@@ -103,9 +103,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
                     threadID  = omp_get_thread_num();
 
-                    printf("\n");
-                    printf("%dthreadiD", threadID);
-                    printf("\n");
 
                     // check for unvisited nodes
                     if (!visited[j]) {
@@ -116,13 +113,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 //                        minimumAdditionalCost = additionalCost;
 //                        minN = i; // where to inset
 //                        minUnvisited = j; // what to insert
-//                            printf("debug%f", additionalCost);
-//                            printf("\n");
                             minimumAdditionalCosts[threadID] = additionalCost;
-//                            printf("debug%f min additional cost stored", minimumAdditionalCosts[threadID]);
-//                            printf("\n");
                             positions[threadID] = i;
-//                            printf("debug%d******", positions[threadID]);
                             nearestVertexes[threadID] = j;
                         }
                     }
