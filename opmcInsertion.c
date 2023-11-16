@@ -121,7 +121,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
         int x=0;
-        for(x =0; i< noOfThreads; x++)
+        for(x =0; x< noOfThreads; x++)
         {
 
             printf("The array is of length %d:", noOfThreads);
