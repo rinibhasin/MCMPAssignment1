@@ -47,7 +47,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     int nearestVertex;
     int i = 0;
 
-    int noOfThreads = omp_get_max_threads();
+    int noOfThreads = 2;
 
 
 
@@ -76,7 +76,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     int *nearestVertexes = (int*)malloc(noOfThreads*sizeof(int));
 
     int y =0;
-    for(y =0; y< noOfThreads; y++)
+    for(y =0;y< noOfThreads; y++)
     {
         minimumAdditionalCosts[y] = DBL_MAX;
         positions[y] =0;
