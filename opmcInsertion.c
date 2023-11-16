@@ -259,7 +259,7 @@ int main(int argc, char *argv[]) {
 
     clock_t start, end;
     double time_taken;
-    start = clock();
+    start = omp_get_wtime();;
 
     printf("%s\n", fileName);
 
@@ -283,7 +283,7 @@ int main(int argc, char *argv[]) {
     cheapestInsertion(distanceMatrix, numOfCoords);
     //farthestInsertion(distanceMatrix, numOfCoords);
 
-    end = clock();
+    end = omp_get_wtime();
     time_taken = ((double) (end - start)) / CLOCKS_PER_SEC;
     printf("The time taken is %fs .\n", time_taken);
 
