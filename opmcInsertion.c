@@ -96,7 +96,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int j;int threadID;
         // tour = {0,1}
 
-            #pragma omp parallel for collapse(2) private(i,j, additionalCost, threadID)
+            #pragma omp parallel for collapse(2) private(i,j, additionalCost, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions,nearestVertexes)
             for (i = 0; i < visitedCount; i++) {
                 // unvisited nodes
                 for (j = 0; j < numOfCoords; j++) {
@@ -124,7 +124,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
         int x=0;
-        #pragma omp single
         for(x =0; x< noOfThreads; x++)
         {
 
@@ -146,7 +145,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         }
 
         // Make space to add unvisited node to computed index
-        #pragma omp single
         for(i = visitedCount; i > minN; i--)
         {
             tour[i+1] = tour[i];
@@ -154,15 +152,14 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
 
-
-
         // add the node to tour
         tour[minN+1] = minUnvisited;
         visited[minUnvisited] = true;
 
-        printf(" Ading node to tour at: %d", minN+1);
+        printf(" Adding node to tour at: %d", minN+1);
         printf("\n");
-        printf(" Ading node to tour: %d", tour[minN+1]);
+        printf(" Adding node to tour: %d", tour[minN+1]);
+        printf("\n");
         visitedCount++;
 
     }
