@@ -71,9 +71,9 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     visitedCount++; // 2
     tour[2] = 0;
 
-    int *minimumAdditionalCosts = (int*)malloc(numOfCoords*sizeof(int));
-    int *positions = (int*)malloc(numOfCoords*sizeof(int));
-    int *nearestVertexes = (int*)malloc(numOfCoords*sizeof(int));
+    double *minimumAdditionalCosts = (int*)malloc(noOfThreads*sizeof(double));
+    int *positions = (int*)malloc(noOfThreads*sizeof(int));
+    int *nearestVertexes = (int*)malloc(noOfThreads*sizeof(int));
 
 
     while(visitedCount < numOfCoords)
