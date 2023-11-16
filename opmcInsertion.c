@@ -57,7 +57,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     int nearestVertex;
     int i = 0;
 
-    int noOfThreads = 40;
+    int noOfThreads = 2;
 
     for(i = 1 ; i <numOfCoords; i++)
     {
@@ -102,6 +102,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                 for (j = 0; j < numOfCoords; j++) {
 
                     int threadID = omp_get_thread_num();
+
+                    printf("%dthreadiD", threadID);
 
                     // check for unvisited nodes
                     if (!visited[j]) {
