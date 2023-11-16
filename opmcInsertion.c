@@ -295,8 +295,8 @@ int main(int argc, char *argv[]) {
     printf("%s\n", fileName);
 
 
-    int numOfCoords = readNumOfCoords("9_coords.coord");
-    double **coordinates = readCoords("9_coords.coord", numOfCoords);
+    int numOfCoords = readNumOfCoords("16_coords.coord");
+    double **coordinates = readCoords("16_coords.coord", numOfCoords);
 
     printf("%dNunber of coords:", numOfCoords);
     printf("\n");
