@@ -116,6 +116,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 //                        minimumAdditionalCost = additionalCost;
 //                        minN = i; // where to inset
 //                        minUnvisited = j; // what to insert
+                            printf("debug%f", additionalCost);
                             minimumAdditionalCosts[threadID] = additionalCost;
                             positions[threadID] = i;
                             nearestVertexes[threadID] = j;
