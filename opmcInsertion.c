@@ -158,7 +158,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         printf(" Adding node to tour: %d", tour[minN+1]);
         printf("\n");
         visitedCount++;
-        printf("before while")
+        printf("before while");
         printf("%d", visited[5]);
     }
 
