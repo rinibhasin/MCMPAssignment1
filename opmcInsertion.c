@@ -142,9 +142,9 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
             printf("\n");
             printf("Minimum additional cost %f:", minimumAdditionalCosts[x]);
             printf("\n");
-            printf("Minimum position %d:", positions[x]);
+            printf("Minimum position**: %d", positions[x]);
             printf("\n");
-                printf("Minimum nearest vertex %d:", nearestVertexes[x]);
+            printf("Minimum nearest vertex**: %d", nearestVertexes[x]);
 
             if(minimumAdditionalCosts[x]< minimumAdditionalCost)
             {
