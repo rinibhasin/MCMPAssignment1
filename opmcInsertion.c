@@ -140,7 +140,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
             printf("\n");
             printf("The element at %d:", x);
             printf("\n");
-            printf("Minimum additional cost %d:", minimumAdditionalCosts[x]);
+            printf("Minimum additional cost %f:", minimumAdditionalCosts[x]);
             printf("\n");
             printf("Minimum position %d:", positions[x]);
             printf("\n");
