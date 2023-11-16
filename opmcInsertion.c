@@ -116,13 +116,13 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 //                        minimumAdditionalCost = additionalCost;
 //                        minN = i; // where to inset
 //                        minUnvisited = j; // what to insert
-                            printf("debug%f", additionalCost);
-                            printf("\n");
+//                            printf("debug%f", additionalCost);
+//                            printf("\n");
                             minimumAdditionalCosts[threadID] = additionalCost;
-                            printf("debug%f min additional cost stored", minimumAdditionalCosts[threadID]);
-                            printf("\n");
+//                            printf("debug%f min additional cost stored", minimumAdditionalCosts[threadID]);
+//                            printf("\n");
                             positions[threadID] = i;
-                            printf("debug%d******", positions[threadID]);
+//                            printf("debug%d******", positions[threadID]);
                             nearestVertexes[threadID] = j;
                         }
                     }
@@ -136,15 +136,14 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         for(x =0; x< noOfThreads; x++)
         {
 
-            printf("The array is of length %d:", noOfThreads);
-            printf("\n");
-            printf("The element at %d:", x);
-            printf("\n");
-            printf("Minimum additional cost %f:", minimumAdditionalCosts[x]);
-            printf("\n");
-            printf("Minimum position**: %d", positions[x]);
-            printf("\n");
-            printf("Minimum nearest vertex**: %d", nearestVertexes[x]);
+//            printf("The array is of length %d:", noOfThreads);
+//            printf("\n");
+//            printf("\n");
+//            printf("Minimum additional cost %f:", minimumAdditionalCosts[x]);
+//            printf("\n");
+//            printf("Minimum position**: %d", positions[x]);
+//            printf("\n");
+//            printf("Minimum nearest vertex**: %d", nearestVertexes[x]);
 
             if(minimumAdditionalCosts[x]< minimumAdditionalCost)
             {
@@ -154,16 +153,23 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
             }
         }
 
-
         // Make space to add unvisited node to computed index
+        #pragma omp single
         for(i = visitedCount; i > minN; i--)
         {
             tour[i+1] = tour[i];
         }
 
+
+
+
+
         // add the node to tour
         tour[minN+1] = minUnvisited;
         visited[minUnvisited] = true;
+
+        printf(" Ading node to tour at: %d", minN+1);
+        printf(" Ading node to tour: %d", tour[minN+1]);
         visitedCount++;
 
     }
