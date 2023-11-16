@@ -49,18 +49,11 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     int noOfThreads = 2;
 
-
-
-
-
-
-//#pragma omp parallel for private(i)
     for(i = 1 ; i <numOfCoords; i++)
     {
         if(distanceMatrix[0][i]< minimumDistance)
         {
             minimumDistance = distanceMatrix[0][i];
-
             nearestVertex = i;
         }
     }
@@ -83,7 +76,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         nearestVertexes[y]=0;
     }
 
-
     while(visitedCount < numOfCoords)
     {
         double minimumAdditionalCost = DBL_MAX;
@@ -95,29 +87,30 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         // tour = {0,1}
 
         #pragma omp parallel for collapse(2) private(i,j)
-        for(i=0; i < visitedCount; i++) {
-            // unvisited nodes
-            for (j = 0; j < numOfCoords; j++) {
+        {
+            for (i = 0; i < visitedCount; i++) {
+                // unvisited nodes
+                for (j = 0; j < numOfCoords; j++) {
 
-                int threadID = omp_get_thread_num();
+                    int threadID = omp_get_thread_num();
 
-                // check for unvisited nodes
-                if (!visited[j]) {
-                    // j =2
-                    additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
-                                     distanceMatrix[tour[i]][tour[i + 1]];
-                    if (additionalCost < minimumAdditionalCosts[threadID]) {
+                    // check for unvisited nodes
+                    if (!visited[j]) {
+                        // j =2
+                        additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
+                                         distanceMatrix[tour[i]][tour[i + 1]];
+                        if (additionalCost < minimumAdditionalCosts[threadID]) {
 //                        minimumAdditionalCost = additionalCost;
 //                        minN = i; // where to inset
 //                        minUnvisited = j; // what to insert
-                        minimumAdditionalCosts[threadID] = additionalCost;
-                        positions[threadID] = i;
-                        nearestVertexes[threadID] = j;
+                            minimumAdditionalCosts[threadID] = additionalCost;
+                            positions[threadID] = i;
+                            nearestVertexes[threadID] = j;
+                        }
                     }
                 }
             }
         }
-
 
 
         int x=0;
@@ -136,7 +129,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                 minN = positions[x];
                 minUnvisited = nearestVertexes[x];
             }
-
         }
 
 
