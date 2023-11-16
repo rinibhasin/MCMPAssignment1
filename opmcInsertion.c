@@ -35,6 +35,16 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
     int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
     bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
+    int m=0;
+    for(m=0; m<numOfCoords; m++)
+    {
+        tour[m] = 0;
+        visited[m] =0;
+    }
+
+    tour[numOfCoords] = 0;
+
+
 
     // Initialise with the first vertex
     tour[0] = 0;
