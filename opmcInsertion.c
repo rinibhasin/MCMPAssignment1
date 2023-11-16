@@ -93,15 +93,15 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int minN;
         int minUnvisited;
         double additionalCost;
-        int j;
+        int j;int threadID;
         // tour = {0,1}
 
-            #pragma omp parallel for collapse(2) private(i,j, additionalCost)
+            #pragma omp parallel for collapse(2) private(i,j, additionalCost, threadID)
             for (i = 0; i < visitedCount; i++) {
                 // unvisited nodes
                 for (j = 0; j < numOfCoords; j++) {
 
-                    int threadID = omp_get_thread_num();
+                    threadID  = omp_get_thread_num();
 
                     printf("\n");
                     printf("%dthreadiD", threadID);
