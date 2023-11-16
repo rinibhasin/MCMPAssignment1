@@ -142,7 +142,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
         // add the node to tour
         tour[minN+1] = minUnvisited;
-        visited[minUnvisited] = true;
+        visited[minUnvisited-1] = true;
 
         printf("\n");
 
