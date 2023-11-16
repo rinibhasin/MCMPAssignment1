@@ -125,6 +125,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
 
 
         int x=0;
+        #pragma omp single
         for(x =0; x< noOfThreads; x++)
         {
 
@@ -136,7 +137,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
             printf("\n");
             printf("Minimum position %d:", positions[x]);
             printf("\n");
-            printf("Minimum nearest vertex %d:", nearestVertexes[x]);
+                printf("Minimum nearest vertex %d:", nearestVertexes[x]);
 
             if(minimumAdditionalCosts[x]< minimumAdditionalCost)
             {
