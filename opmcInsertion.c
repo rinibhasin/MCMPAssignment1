@@ -57,7 +57,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     int nearestVertex;
     int i = 0;
 
-    int noOfThreads = 2;
+    int noOfThreads = omp_get_max_threads();
 
     for(i = 1 ; i <numOfCoords; i++)
     {
