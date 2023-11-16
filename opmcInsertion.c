@@ -129,9 +129,13 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         {
 
             printf("The array is of length %d:", noOfThreads);
+            printf("\n");
             printf("The element at %d:", x);
+            printf("\n");
             printf("Minimum additional cost %d:", minimumAdditionalCosts[x]);
+            printf("\n");
             printf("Minimum position %d:", positions[x]);
+            printf("\n");
             printf("Minimum nearest vertex %d:", nearestVertexes[x]);
 
             if(minimumAdditionalCosts[x]< minimumAdditionalCost)
@@ -281,8 +285,8 @@ int main(int argc, char *argv[]) {
     printf("%s\n", fileName);
 
 
-    int numOfCoords = readNumOfCoords("16_coords.coord");
-    double **coordinates = readCoords("16_coords.coord", numOfCoords);
+    int numOfCoords = readNumOfCoords("9_coords.coord");
+    double **coordinates = readCoords("9_coords.coord", numOfCoords);
 
     printf("%dNunber of coords:", numOfCoords);
     printf("\n");
