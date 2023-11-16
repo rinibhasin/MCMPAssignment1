@@ -12,9 +12,6 @@
 #include <stdlib.h>
 
 
-
-#define MIN(x, y) (((x) < (y)) ? (x) : (y))
-
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
 
@@ -43,8 +40,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     }
 
     tour[numOfCoords] = 0;
-
-
 
     // Initialise with the first vertex
     tour[0] = 0;
@@ -79,13 +74,6 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     int *nearestVertexes = (int*)malloc(noOfThreads*sizeof(int));
 
     int y =0;
-    for(y =0;y< noOfThreads; y++)
-    {
-        minimumAdditionalCosts[y] = DBL_MAX;
-        positions[y] =0;
-        nearestVertexes[y]=0;
-    }
-
     while(visitedCount < numOfCoords)
     {
 
@@ -104,7 +92,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         int j;int threadID;
         // tour = {0,1}
 
-            #pragma omp parallel for collapse(2) private(i,j, additionalCost, threadID) firstprivate(visited) shared(distanceMatrix, minimumAdditionalCosts, positions,nearestVertexes)
+            #pragma omp parallel for collapse(2) private(i,j, additionalCost, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions,nearestVertexes)
             for (i = 0; i < visitedCount; i++) {
                 // unvisited nodes
                 for (j = 0; j < numOfCoords; j++) {
@@ -115,9 +103,7 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
                         additionalCost = distanceMatrix[j][tour[i]] + distanceMatrix[j][tour[i + 1]] -
                                          distanceMatrix[tour[i]][tour[i + 1]];
                         if (additionalCost < minimumAdditionalCosts[threadID]) {
-//                        minimumAdditionalCost = additionalCost;
-//                        minN = i; // where to inset
-//                        minUnvisited = j; // what to insert
+
                             minimumAdditionalCosts[threadID] = additionalCost;
                             positions[threadID] = i;
                             nearestVertexes[threadID] = j;
@@ -146,31 +132,14 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
         }
 
 
-
         // add the node to tour
         visited[minUnvisited] = true;
         tour[minN+1] = minUnvisited;
 
-        printf("MinUnvisted: %d", minUnvisited);
-        printf("\n");
-        printf("Visited array");
-        int k=0;
-        for(k=0; k< numOfCoords; k++)
-        {
-            printf("%d, \t", visited[k]);
-        }
 
-        printf(" Adding node to tour at: %d", minN+1);
-        printf("\n");
-        printf(" Value of minimum unvisited: %d", minUnvisited);
-        printf(" Adding node to tour: %d", tour[minN+1]);
-        printf("\n");
         visitedCount++;
-        printf("before while");
-        printf("%d", visited[5]);
-    }
 
-    printf("Cheapest Insertion TSP Tour\n");
+    }
 
     double totalLength = numOfCoords+1;
     writeTourToFile(tour, totalLength, "output.txt");
@@ -298,7 +267,7 @@ int main(int argc, char *argv[]) {
     int numOfCoords = readNumOfCoords("4096_coords.coord");
     double **coordinates = readCoords("4096_coords.coord", numOfCoords);
 
-    printf("%dNunber of coords:", numOfCoords);
+    printf("%dNumber of coords:", numOfCoords);
     printf("\n");
 
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
