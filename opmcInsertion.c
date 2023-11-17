@@ -251,7 +251,7 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
 int main(int argc, char *argv[]) {
 
     // taking default file name if user didn't provide input
-    char *fileName = "9_coords.coord";
+    char *fileName = "16_coords.coord";
 
     if (argc > 1) {
         fileName = argv[1];
@@ -264,8 +264,8 @@ int main(int argc, char *argv[]) {
     printf("%s\n", fileName);
 
 
-    int numOfCoords = readNumOfCoords("4096_coords.coord");
-    double **coordinates = readCoords("4096_coords.coord", numOfCoords);
+    int numOfCoords = readNumOfCoords(fileName);
+    double **coordinates = readCoords(fileName, numOfCoords);
 
     printf("%dNumber of coords:", numOfCoords);
     printf("\n");
