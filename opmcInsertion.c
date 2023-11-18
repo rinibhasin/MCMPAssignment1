@@ -233,18 +233,6 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
     printf("Farthest Insertion TSP Tour \n");
 
 
-    double totalLength = 0;
-
-    for ( i = 0; i <=numOfCoords; i++) {
-        printf("%d ", tour[i]);
-        if(i>0) {
-            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
-        }
-    }
-    printf("\n");
-
-    printf("%f", totalLength);
-
 }
 
 
@@ -257,18 +245,14 @@ int main(int argc, char *argv[]) {
         fileName = argv[1];
     }
 
-    clock_t start, end;
+    double start, end;
     double time_taken;
     start = omp_get_wtime();;
 
     printf("%s\n", fileName);
 
-
     int numOfCoords = readNumOfCoords(fileName);
     double **coordinates = readCoords(fileName, numOfCoords);
-
-    printf("%dNumber of coords:", numOfCoords);
-    printf("\n");
 
     double **distanceMatrix = (double **)malloc(numOfCoords * sizeof(double *));
 
@@ -281,10 +265,9 @@ int main(int argc, char *argv[]) {
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
     cheapestInsertion(distanceMatrix, numOfCoords);
-    //farthestInsertion(distanceMatrix, numOfCoords);
 
     end = omp_get_wtime();
-    time_taken = ((double) (end - start)) / CLOCKS_PER_SEC;
+    time_taken = (end - start);
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
@@ -298,7 +281,6 @@ int main(int argc, char *argv[]) {
     }
     free(distanceMatrix);
 
-    printf("%d", numOfCoords); // %d is the format specifier for integers
     return 0;
 }
 
