@@ -53,11 +53,11 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
     int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
     bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
 
-    int f=0;
-    for (f = 0; f < numOfCoords; f++) {
-        visited[f] = 0;
-        tour =0;
-    }
+//    int f=0;
+//    for (f = 0; f < numOfCoords; f++) {
+//        visited[f] = 0;
+//        tour =0;
+//    }
 
 
     // Initialise with the first vertex
