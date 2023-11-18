@@ -5,6 +5,7 @@
 #include<math.h>
 #include<stdbool.h>
 
+
 int readNumOfCoords(char *fileName);
 double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
@@ -37,7 +38,7 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
     return distanceMatrix;
 }
 
-void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName)
+void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName)
 {
     int visitedCount = 0;
 
@@ -49,31 +50,33 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
     visited[0] = true;
     visitedCount++;
 
-    // Find the farthest vertex
-    double maximumDistance = DBL_MIN;
+    // Find the nearest vertex
+    double minimumDistance = DBL_MAX;
 
-    int farthestVertex;
+    int nearestVertex;
     int i = 0;
     for(i = 1 ; i <numOfCoords; i++)
     {
-        if(distanceMatrix[0][i]> maximumDistance)
+        if(distanceMatrix[0][i]< minimumDistance)
         {
-            maximumDistance = distanceMatrix[0][i];
-            farthestVertex = i;
+            minimumDistance = distanceMatrix[0][i];
+            nearestVertex = i;
         }
     }
 
-    // Add the farthest vertex in the tour
-    tour[1]= farthestVertex;
-    visited[farthestVertex] = true;
+    // Add the nearest vertex in the tour
+    tour[1]= nearestVertex;
+    visited[nearestVertex] = true;
     visitedCount++; // 2
     tour[2] = 0;
 
     while(visitedCount < numOfCoords)
     {
-        double farthestDistance = 0;
-        int farthestNode;
-        // tour = {0,1}
+        double minimumAdditionalCost = DBL_MAX;
+
+        int minN;
+        int minUnvisited;
+        // tour = {0,1,}
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
@@ -84,25 +87,14 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
                 if(!visited[j])
                 {
                     // j =2
-                    double currentDistance = distanceMatrix[j][tour[i]];
-                    if(currentDistance > farthestDistance)
+                    double additionalCost = distanceMatrix[j][tour[i]]+ distanceMatrix[j][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
+                    if(additionalCost < minimumAdditionalCost)
                     {
-                        farthestDistance = currentDistance;
-                        farthestNode = j; // where to insert
+                        minimumAdditionalCost = additionalCost;
+                        minN = i; // where to inset
+                        minUnvisited = j; // what to insert
                     }
                 }
-            }
-        }
-        double minimumAdditionalCost = DBL_MAX;
-        int minN;
-        for(i=0; i < visitedCount; i++)
-        {
-            // j =2
-            double additionalCost = distanceMatrix[farthestNode][tour[i]]+ distanceMatrix[farthestNode][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
-            if(additionalCost < minimumAdditionalCost)
-            {
-                minimumAdditionalCost = additionalCost;
-                minN = i; // where to insert
             }
         }
 
@@ -111,36 +103,29 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
         {
             tour[i+1] = tour[i];
         }
-        printf("Current Visited Count %d\n", visitedCount);
 
         // add the node to tour
-        tour[minN+1] = farthestNode;
-        visited[farthestNode] = true;
+        tour[minN+1] = minUnvisited;
+        visited[minUnvisited] = true;
         visitedCount++;
 
     }
 
-    double totalLength = 0;
+    printf("Cheapest Insertion TSP Tour\n");
 
-    for ( i = 0; i <=numOfCoords; i++) {
-        printf("%d ", tour[i]);
-        if(i>0) {
-            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
-        }
-    }
+    double totalLength = numOfCoords+1;
+    writeTourToFile(tour, totalLength, outputFileName);
 
-    writeTourToFile(tour, numOfCoords+1, outputFileName);
 }
-
 
 int main(int argc, char *argv[]) {
 
-    // taking default file name if user didn't provide input
+    // Taking default file names if user didn't provide input
     char *fileName = "9_coords.coord";
     char *outputfileName = "output.txt";
 
 
-    if (argc > 1) {
+    if (argc > 2) {
         fileName = argv[1];
         outputfileName = argv[2];
     }
@@ -148,8 +133,6 @@ int main(int argc, char *argv[]) {
     clock_t start, end;
     double time_taken;
     start = clock();
-
-    printf("%s\n", fileName);
 
 
     int numOfCoords = readNumOfCoords(fileName);
@@ -166,14 +149,14 @@ int main(int argc, char *argv[]) {
 
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
-    farthestInsertion(distanceMatrix, numOfCoords, outputfileName);
+    cheapestInsertion(distanceMatrix, numOfCoords, outputfileName);
 
     end = clock();
     time_taken = ((double) (end - start)) / CLOCKS_PER_SEC;
+    printf("Cheapest insertion for %d nodes completed sequentially\n", numOfCoords);
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
-
     for (i = 0; i < numOfCoords; i++) {
         free(coordinates[i]);
     }
@@ -184,7 +167,6 @@ int main(int argc, char *argv[]) {
     }
     free(distanceMatrix);
 
-    printf("%d", numOfCoords); // %d is the format specifier for integers
     return 0;
 }
 

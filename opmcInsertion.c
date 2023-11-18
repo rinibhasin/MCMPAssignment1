@@ -11,10 +11,6 @@
 #include <omp.h>
 #include <stdlib.h>
 
-
-double calculateDistance(double x1, double y1, double x2, double y2);
-double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);
-
 int readNumOfCoords(char *fileName);
 double **readCoords(char *filename, int numOfCoords);
 void *writeTourToFile(int *tour, int tourLength, char *filename);
@@ -25,8 +21,35 @@ double calculateDistance(double x1, double y1, double x2, double y2) {
     return sqrt(((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)));
 }
 
+double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
-void cheapestInsertion(double **distanceMatrix, int numOfCoords)
+    int i =0; int j =0;
+    double x1 =0;
+    double x2 =0;
+    double y1 =0;
+    double y2 =0;
+    double distance = 0;
+
+#pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
+    for (i = 0; i < numOfCoords; i++) {
+        for (j = 0; j < numOfCoords; j++) {
+
+            x1 = coordinates[i][0];
+            y1 = coordinates[i][1];
+            x2 = coordinates[j][0];
+            y2 = coordinates[j][1];
+
+            distance = calculateDistance(x1, y1, x2, y2);
+
+            distanceMatrix[i][j] = distance;
+
+        }
+    }
+
+    return distanceMatrix;
+}
+
+void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFileName)
 {
     int visitedCount = 0;
 
@@ -142,114 +165,27 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords)
     }
 
     double totalLength = numOfCoords+1;
-    writeTourToFile(tour, totalLength, "output.txt");
-
-}
-void farthestInsertion(double **distanceMatrix, int numOfCoords)
-{
-    int visitedCount = 0;
-
-    int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
-    bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
-
-    // Initialise with the first vertex
-    tour[0] = 0;
-    visited[0] = true;
-    visitedCount++;
-
-    // Find the nearest vertex
-    double maximumDistance = DBL_MIN;
-
-    int farthestVertex;
-    int i = 0;
-    for(i = 1 ; i <numOfCoords; i++)
-    {
-        if(distanceMatrix[0][i]> maximumDistance)
-        {
-            maximumDistance = distanceMatrix[0][i];
-            farthestVertex = i;
-        }
-    }
-
-    // Add the nearest vertex in the tour
-    tour[1]= farthestVertex;
-    visited[farthestVertex] = true;
-    visitedCount++; // 2
-    tour[2] = 0;
-
-    while(visitedCount < numOfCoords)
-    {
-        double farthestDistance = 0;
-        int farthestNode;
-        // tour = {0,1}
-        for(i=0; i < visitedCount; i++)
-        {
-            // unvisited nodes
-            int j = 0;
-            for(j =0; j<numOfCoords; j++)
-            {
-                // check for unvisited nodes
-                if(!visited[j])
-                {
-                    // j =2
-                    double currentDistance = distanceMatrix[j][tour[i]];
-                    if(currentDistance > farthestDistance)
-                    {
-                        farthestDistance = currentDistance;
-                        farthestNode = j; // where to inset
-                    }
-                }
-            }
-        }
-        double minimumAdditionalCost = DBL_MAX;
-        int minN;
-        for(i=0; i < visitedCount; i++)
-        {
-            // j =2
-            double additionalCost = distanceMatrix[farthestNode][tour[i]]+ distanceMatrix[farthestNode][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
-            if(additionalCost < minimumAdditionalCost)
-            {
-                minimumAdditionalCost = additionalCost;
-                minN = i; // where to inset
-            }
-        }
-
-        // Make space to add unvisited node to computed index
-        for(i = visitedCount; i > minN; i--)
-        {
-            tour[i+1] = tour[i];
-        }
-        printf("Current Visited Count %d\n", visitedCount);
-
-        printf("Adding %d at position %d after %d:\n", farthestNode, minN + 1, tour[minN]);
-
-        // add the node to tour
-        tour[minN+1] = farthestNode;
-        visited[farthestNode] = true;
-        visitedCount++;
-
-    }
-
-    printf("Farthest Insertion TSP Tour \n");
-
-
+    writeTourToFile(tour, totalLength, outputFileName);
 }
 
 
 int main(int argc, char *argv[]) {
 
-    // taking default file name if user didn't provide input
+    // Taking default file names if user didn't provide input
     char *fileName = "16_coords.coord";
+    char *outputfile = "output.txt";
+
 
     if (argc > 1) {
         fileName = argv[1];
+        outputfile = argv[2];
     }
 
     double start, end;
     double time_taken;
+
     start = omp_get_wtime();;
 
-    printf("%s\n", fileName);
 
     int numOfCoords = readNumOfCoords(fileName);
     double **coordinates = readCoords(fileName, numOfCoords);
@@ -264,10 +200,12 @@ int main(int argc, char *argv[]) {
 
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
 
-    cheapestInsertion(distanceMatrix, numOfCoords);
+    cheapestInsertion(distanceMatrix, numOfCoords, outputfile);
 
     end = omp_get_wtime();
     time_taken = (end - start);
+
+    printf("Cheapest insertion for %d nodes completed\n", numOfCoords);
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
@@ -285,30 +223,3 @@ int main(int argc, char *argv[]) {
 }
 
 
-double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
-
-   int i =0; int j =0;
-   double x1 =0;
-   double x2 =0;
-   double y1 =0;
-   double y2 =0;
-   double distance = 0;
-
-   #pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
-    for (i = 0; i < numOfCoords; i++) {
-        for (j = 0; j < numOfCoords; j++) {
-
-            x1 = coordinates[i][0];
-            y1 = coordinates[i][1];
-            x2 = coordinates[j][0];
-            y2 = coordinates[j][1];
-
-            distance = calculateDistance(x1, y1, x2, y2);
-
-            distanceMatrix[i][j] = distance;
-
-        }
-    }
-
-    return distanceMatrix;
-}

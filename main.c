@@ -2,14 +2,8 @@
 #include <float.h>
 #include <stdlib.h>
 #include <time.h>
-#include <stdio.h>
-#include <float.h>
-#include <stdlib.h>
-#include <time.h>
 #include<math.h>
 #include<stdbool.h>
-
-
 
 double calculateDistance(double x1, double y1, double x2, double y2);
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix);

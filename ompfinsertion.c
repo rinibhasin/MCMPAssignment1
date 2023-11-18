@@ -87,7 +87,6 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
     int y = 0, threadID;
     double unvisitedmax = -1;
 
-
     while(visitedCount < numOfCoords)
     {
         double farthestDistance = 0;
@@ -154,7 +153,8 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
 
     }
 
-    writeTourToFile(tour, visitedCount, outputfilename);
+    int tourLength = visitedCount+1;
+    writeTourToFile(tour, tourLength, outputfilename);
 
 }
 
