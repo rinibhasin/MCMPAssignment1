@@ -103,12 +103,12 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
             nearestVertexes[y] = 0;
         }
         // tour = {0,1}
-
+        int j = 0;
         #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions, nearestVertexes)
         for(i=0; i < visitedCount; i++)
         {
             // unvisited nodes
-            int j = 0;
+
             for(j =0; j<numOfCoords; j++)
             {
                 threadID = omp_get_thread_num();
