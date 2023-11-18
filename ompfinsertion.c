@@ -24,12 +24,9 @@ double calculateDistance(double x1, double y1, double x2, double y2) {
 
 double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double **distanceMatrix) {
 
-    int i =0; int j =0;
-    double x1 =0;
-    double x2 =0;
-    double y1 =0;
-    double y2 =0;
-    double distance = 0;
+    int i, j;
+    double x1, x2, y1, y2;
+    double distance;
 
 #pragma omp parallel for collapse(2) private(i, j, x1, y1, x2, y2, distance) shared(numOfCoords)
     for (i = 0; i < numOfCoords; i++) {
@@ -41,7 +38,6 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
             y2 = coordinates[j][1];
 
             distance = calculateDistance(x1, y1, x2, y2);
-
             distanceMatrix[i][j] = distance;
 
         }
@@ -62,7 +58,7 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
     visited[0] = true;
     visitedCount++;
 
-    // Find the nearest vertex
+    // Find the farthest vertex
     double maximumDistance = DBL_MIN;
 
     int farthestVertex;
@@ -84,9 +80,9 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
 
     int noOfThreads = omp_get_max_threads();
 
-    double *minimumAdditionalCosts = (double *) malloc(noOfThreads * sizeof(double));
+    double *farthestDistances = (double *) malloc(noOfThreads * sizeof(double));
     int *positions = (int *) malloc(noOfThreads * sizeof(int));
-    int *nearestVertexes = (int *) malloc(noOfThreads * sizeof(int));
+    int *farthestNodes = (int *) malloc(noOfThreads * sizeof(int));
 
     int y = 0, threadID;
     double unvisitedmax = -1;
@@ -98,55 +94,50 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
         int farthestNode;
 
         for (y = 0; y < noOfThreads; y++) {
-            minimumAdditionalCosts[y] = 0;
+            farthestDistances[y] = 0;
             positions[y] = 0;
-            nearestVertexes[y] = 0;
+            farthestNodes[y] = 0;
         }
         // tour = {0,1}
         int j = 0;
         #pragma omp parallel for collapse(2) private(i, j, threadID) shared(visited, distanceMatrix, minimumAdditionalCosts, positions, nearestVertexes)
-        for(i=0; i < visitedCount; i++)
+        for(i=0; i <visitedCount; i++)
         {
-            // unvisited nodes
-
-            for(j =0; j<numOfCoords; j++)
+            // Loop for nodes
+            for(j=0; j<numOfCoords; j++)
             {
                 threadID = omp_get_thread_num();
-                // check for unvisited nodes
+                // Checking for unvisited nodes
                 if(!visited[j])
                 {
                     // j =2
                     double currentDistance = distanceMatrix[j][tour[i]];
-                    // change variable name to farthest
-                    if(currentDistance > minimumAdditionalCosts[threadID])
+                    if(currentDistance > farthestDistances[threadID])
                     {
-                        minimumAdditionalCosts[threadID] = currentDistance;
-                        nearestVertexes[threadID] = j;
-//                        farthestDistance = currentDistance;
-//                        farthestNode = j; // where to inset
+                        farthestDistances[threadID] = currentDistance;
+                        farthestNodes[threadID] = j;
                     }
                 }
             }
         }
 
-        int x = 0;
-        for (x = 0; x < noOfThreads; x++) {
-            if (minimumAdditionalCosts[x] > farthestDistance) {
-                farthestDistance = minimumAdditionalCosts[x];
-                farthestNode = nearestVertexes[x];
+        for (i = 0; i<noOfThreads; i++) {
+            if (farthestDistances[i] > farthestDistance) {
+                farthestDistance = farthestDistances[i];
+                farthestNode = farthestNodes[i];
             }
         }
 
         double minimumAdditionalCost = DBL_MAX;
         int minN;
-        for(i=0; i < visitedCount; i++)
+        for(i=0; i <visitedCount; i++)
         {
             // j =2
             double additionalCost = distanceMatrix[farthestNode][tour[i]]+ distanceMatrix[farthestNode][tour[i+1]] - distanceMatrix[tour[i]][tour[i+1]];
             if(additionalCost < minimumAdditionalCost)
             {
                 minimumAdditionalCost = additionalCost;
-                minN = i; // where to inset
+                minN = i; // where to insert
             }
         }
 
@@ -155,17 +146,13 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
         {
             tour[i+1] = tour[i];
         }
-//        printf("Current Visited Count %d\n", visitedCount);
-//
-//        printf("Adding %d at position %d after %d:\n", farthestNode, minN + 1, tour[minN]);
 
-        // add the node to tour
+        // Add the node to the tour
         tour[minN+1] = farthestNode;
         visited[farthestNode] = true;
         visitedCount++;
 
     }
-
 }
 
 int main(int argc, char *argv[]) {
@@ -179,9 +166,8 @@ int main(int argc, char *argv[]) {
 
     double start, end;
     double time_taken;
-    start = omp_get_wtime();;
 
-    printf("%s\n", fileName);
+    start = omp_get_wtime();;
 
     int numOfCoords = readNumOfCoords(fileName);
     double **coordinates = readCoords(fileName, numOfCoords);
@@ -195,11 +181,12 @@ int main(int argc, char *argv[]) {
     }
 
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
-
     farthestInsertion(distanceMatrix, numOfCoords);
 
     end = omp_get_wtime();
     time_taken = (end - start);
+
+    printf("Farthest insertion for %d nodes completed\n", numOfCoords);
     printf("The time taken is %fs .\n", time_taken);
 
     // Free memory
