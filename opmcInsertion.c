@@ -164,8 +164,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
 
     }
 
-    double totalLength = numOfCoords+1;
-    writeTourToFile(tour, totalLength, outputFileName);
+    double tourLength = visitedCount+1;
+    writeTourToFile(tour, tourLength, outputFileName);
 }
 
 

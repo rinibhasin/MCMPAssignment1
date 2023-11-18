@@ -113,8 +113,8 @@ void cheapestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
 
     printf("Cheapest Insertion TSP Tour\n");
 
-    double totalLength = numOfCoords+1;
-    writeTourToFile(tour, totalLength, outputFileName);
+    int tourLength = visitedCount+1;
+    writeTourToFile(tour, tourLength, outputFileName);
 
 }
 

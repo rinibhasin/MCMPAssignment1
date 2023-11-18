@@ -129,7 +129,8 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
         }
     }
 
-    writeTourToFile(tour, numOfCoords+1, outputFileName);
+    int tourLength = visitedCount+1;
+    writeTourToFile(tour, tourLength, outputFileName);
 }
 
 
