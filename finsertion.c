@@ -111,7 +111,6 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputFil
         {
             tour[i+1] = tour[i];
         }
-        printf("Current Visited Count %d\n", visitedCount);
 
         // add the node to tour
         tour[minN+1] = farthestNode;
