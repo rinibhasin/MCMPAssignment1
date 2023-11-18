@@ -55,7 +55,7 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
 
     int f=0;
     for (f = 0; f < numOfCoords; f++) {
-        visited[f] = false;
+        visited[f] = 0;
         tour =0;
     }
 
