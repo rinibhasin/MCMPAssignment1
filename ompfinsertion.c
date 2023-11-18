@@ -155,9 +155,9 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
         {
             tour[i+1] = tour[i];
         }
-        printf("Current Visited Count %d\n", visitedCount);
-
-        printf("Adding %d at position %d after %d:\n", farthestNode, minN + 1, tour[minN]);
+//        printf("Current Visited Count %d\n", visitedCount);
+//
+//        printf("Adding %d at position %d after %d:\n", farthestNode, minN + 1, tour[minN]);
 
         // add the node to tour
         tour[minN+1] = farthestNode;
@@ -165,23 +165,6 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
         visitedCount++;
 
     }
-
-    printf("Farthest Insertion TSP Tour \n");
-
-
-
-//
-//    double totalLength = 0;
-//
-//    for ( i = 0; i <=numOfCoords; i++) {
-//        printf("%d ", tour[i]);
-//        if(i>0) {
-//            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
-//        }
-//    }
-//    printf("\n");
-//
-//    printf("%f", totalLength);
 
 }
 
