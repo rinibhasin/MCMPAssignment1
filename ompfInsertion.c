@@ -53,6 +53,13 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
     int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
     bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
 
+    int f=0;
+    for (f = 0; f < numOfCoords; f++) {
+        visited[f] = false;
+        tour =0;
+    }
+
+
     // Initialise with the first vertex
     tour[0] = 0;
     visited[0] = true;
@@ -110,7 +117,7 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
                 if(!visited[j])
                 {
                     // j =2
-                    double currentDistance = distanceMatrix[j][tour[i]];
+                    double currentDistance = distanceMatrix[tour[i]][j];
                     if(currentDistance > farthestDistances[threadID])
                     {
                         farthestDistances[threadID] = currentDistance;
@@ -161,8 +168,8 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
 int main(int argc, char *argv[]) {
 
     // taking default file names if user didn't provide input
-    char *fileName = "16_coords.coord";
-    char *outputfile = "output.txt";
+    char *fileName;
+    char *outputfile;
 
     if (argc > 1) {
         fileName = argv[1];
