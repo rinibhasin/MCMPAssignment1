@@ -100,7 +100,7 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
         int farthestNode;
 
         for (y = 0; y < noOfThreads; y++) {
-            farthestDistances[y] = 0;
+            farthestDistances[y] = 0.0;
             positions[y] = 0;
             farthestNodes[y] = 0;
         }
@@ -127,10 +127,11 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
             }
         }
 
-        for (i = 0; i<noOfThreads; i++) {
-            if (farthestDistances[i] > farthestDistance) {
-                farthestDistance = farthestDistances[i];
-                farthestNode = farthestNodes[i];
+        int m=0;
+        for (m = 0; m<noOfThreads; m++) {
+            if (farthestDistances[m] > farthestDistance) {
+                farthestDistance = farthestDistances[m];
+                farthestNode = farthestNodes[m];
             }
         }
 
