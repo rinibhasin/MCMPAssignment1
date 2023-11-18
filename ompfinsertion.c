@@ -46,7 +46,7 @@ double **calculateDistanceMatrix(double **coordinates, int numOfCoords, double *
     return distanceMatrix;
 }
 
-void farthestInsertion(double **distanceMatrix, int numOfCoords)
+void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfilename)
 {
     int visitedCount = 0;
 
@@ -153,15 +153,21 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords)
         visitedCount++;
 
     }
+
+    writeTourToFile(tour, i, outputfilename);
+
 }
 
 int main(int argc, char *argv[]) {
 
-    // taking default file name if user didn't provide input
+    // taking default file names if user didn't provide input
     char *fileName = "16_coords.coord";
+    char *outputfile = "output.txt";
 
     if (argc > 1) {
         fileName = argv[1];
+        outputfile = argv[2];
+
     }
 
     double start, end;
@@ -181,7 +187,7 @@ int main(int argc, char *argv[]) {
     }
 
     distanceMatrix = calculateDistanceMatrix(coordinates, numOfCoords, distanceMatrix);
-    farthestInsertion(distanceMatrix, numOfCoords);
+    farthestInsertion(distanceMatrix, numOfCoords, outputfile);
 
     end = omp_get_wtime();
     time_taken = (end - start);
