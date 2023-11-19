@@ -53,12 +53,6 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
     int *tour = (int*)malloc((numOfCoords+1)*sizeof(int));
     bool *visited = (bool*)malloc(numOfCoords*sizeof(bool));
 
-//    int f=0;
-//    for (f = 0; f < numOfCoords; f++) {
-//        visited[f] = 0;
-//        tour =0;
-//    }
-
 
     // Initialise with the first vertex
     tour[0] = 0;
@@ -87,6 +81,9 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
 
     int noOfThreads = omp_get_max_threads();
 
+    printf("no of threads:%d\n", noOfThreads);
+
+
     double *farthestDistances = (double *) malloc(noOfThreads * sizeof(double));
     int *positions = (int *) malloc(noOfThreads * sizeof(int));
     int *farthestNodes = (int *) malloc(noOfThreads * sizeof(int));
@@ -113,11 +110,12 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
             for(j=0; j<numOfCoords; j++)
             {
                 threadID = omp_get_thread_num();
+                printf("tHREADID:%d\n", threadID);
                 // Checking for unvisited nodes
                 if(!visited[j])
                 {
                     // j =2
-                    double currentDistance = distanceMatrix[tour[i]][j];
+                    double currentDistance = distanceMatrix[j][tour[i]];
                     if(currentDistance > farthestDistances[threadID])
                     {
                         farthestDistances[threadID] = currentDistance;
@@ -130,6 +128,8 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
         int m=0;
         for (m = 0; m<noOfThreads; m++) {
             if (farthestDistances[m] > farthestDistance) {
+                printf("Updating farthest distance tHREADID:%d\n", threadID);
+                printf("farthestDistance :%f\n", farthestDistances[m]);
                 farthestDistance = farthestDistances[m];
                 farthestNode = farthestNodes[m];
             }
