@@ -161,6 +161,14 @@ void farthestInsertion(double **distanceMatrix, int numOfCoords, char *outputfil
 
     }
 
+    double totalLength;
+    for ( i = 0; i <=numOfCoords; i++) {
+        printf("%d ", tour[i]);
+        if(i>0) {
+            totalLength += distanceMatrix[tour[i]][tour[i - 1]];
+        }
+    }
+
     int tourLength = visitedCount+1;
     writeTourToFile(tour, tourLength, outputfilename);
 
